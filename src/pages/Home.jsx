@@ -16,7 +16,8 @@ import {
   ChartNoAxesColumn,
   Bath,
   Play,
-  Quote,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const gold = "#bb9876";
@@ -28,6 +29,33 @@ const navLinks = [
   ["Gallery", "#gallery"],
   ["About Us", "#about"],
   ["Contact Us", "#contact"],
+];
+
+const heroSlides = [
+  {
+    image:
+      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=2200&q=90",
+    title: "Luxurious Hotel",
+    subtitle: "Experience",
+    button: "View Rooms",
+    link: "#rooms",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=2200&q=90",
+    title: "Convenient City",
+    subtitle: "Location",
+    button: "Contact Us",
+    link: "#contact",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=90",
+    title: "Comfortable",
+    subtitle: "Living Spaces",
+    button: "Explore Rooms",
+    link: "#rooms",
+  },
 ];
 
 const rooms = [
@@ -75,22 +103,10 @@ const offers = [
 ];
 
 const facilities = [
-  {
-    title: "City Views",
-    icon: Building2,
-  },
-  {
-    title: "Swimming Pool",
-    icon: Waves,
-  },
-  {
-    title: "South Facing",
-    icon: Compass,
-  },
-  {
-    title: "Subway Nearby",
-    icon: TramFront,
-  },
+  { title: "City Views", icon: Building2 },
+  { title: "Swimming Pool", icon: Waves },
+  { title: "South Facing", icon: Compass },
+  { title: "Subway Nearby", icon: TramFront },
 ];
 
 const currencies = ["USD", "EUR", "GBP", "INR"];
@@ -170,7 +186,21 @@ export default function Home() {
   const [showGuests, setShowGuests] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
 
+  // Hero slider state
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide(
+      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length,
+    );
+  };
+
   const today = new Date();
+
   const localToday = [
     today.getFullYear(),
     String(today.getMonth() + 1).padStart(2, "0"),
@@ -204,6 +234,7 @@ export default function Home() {
 
   const scrollToBooking = () => {
     setMobileMenu(false);
+
     document.getElementById("booking")?.scrollIntoView({
       behavior: "smooth",
     });
@@ -211,7 +242,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen w-full overflow-x-clip bg-[#f2f2f3] font-sans text-[#292c31]">
-      {/* Top contact bar */}
+      {/* TOP CONTACT BAR */}
 
       <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-[1454px] flex-col items-start justify-between gap-3 px-4 py-3 sm:px-6 lg:min-h-[59px] lg:flex-row lg:items-center lg:px-8 lg:py-0">
@@ -280,7 +311,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* NAVIGATION */}
 
       <header className="relative z-30 bg-white">
         <div className="mx-auto flex h-[76px] max-w-[1454px] items-center justify-between px-5 sm:h-[88px] sm:px-6 lg:h-[100px] lg:px-8">
@@ -345,40 +376,98 @@ export default function Home() {
         )}
       </header>
 
-      {/* Hero */}
+      {/* HERO IMAGE SLIDER */}
 
       <section
         id="home"
-        className="relative flex min-h-[370px] items-center bg-cover bg-center sm:min-h-[440px] lg:min-h-[520px]"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=2200&q=90')",
-        }}
+        className="relative h-[430px] overflow-hidden sm:h-[520px] lg:h-[610px]"
+        aria-roledescription="carousel"
+        aria-label="Hotel highlights"
       >
-        <div className="absolute inset-0 bg-black/55" />
+        {/* Background slides */}
+        {heroSlides.map((slide, index) => (
+          <div
+            key={slide.title}
+            aria-hidden={currentSlide !== index}
+            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out ${
+              currentSlide === index ? "z-[1] opacity-100" : "z-0 opacity-0"
+            }`}
+            style={{
+              backgroundImage: `url("${slide.image}")`,
+            }}
+          />
+        ))}
 
-        <div className="relative mx-auto w-full max-w-[1454px] px-5 py-12 sm:px-8 sm:py-16 lg:px-8">
-          <h1 className="mb-7 text-4xl font-light leading-[1.2] tracking-tight text-white sm:mb-9 sm:text-6xl lg:text-7xl xl:text-[76px]">
-            Convenient City
-            <br />
-            Location
-          </h1>
+        {/* Dark overlay */}
+        <div className="pointer-events-none absolute inset-0 z-[2] bg-black/50" />
 
-          <a
-            href="#contact"
-            className="inline-flex min-h-12 items-center justify-center px-7 py-3 text-sm font-semibold text-white transition hover:brightness-90 sm:min-h-[60px] sm:px-9 sm:text-base"
-            style={{ backgroundColor: gold }}
-          >
-            Contact Us
-          </a>
+        {/* Slider text */}
+        <div className="absolute inset-0 z-[3] flex items-center">
+          <div className="mx-auto w-full max-w-[1454px] px-8 sm:px-16 lg:px-24">
+            <div className="max-w-2xl">
+              <h1
+                key={currentSlide}
+                className="mb-8 text-4xl font-light leading-tight tracking-wide text-white sm:text-6xl lg:text-7xl"
+              >
+                {heroSlides[currentSlide].title}
+                <br />
+                {heroSlides[currentSlide].subtitle}
+              </h1>
+
+              <a
+                href={heroSlides[currentSlide].link}
+                className="inline-flex min-h-[60px] items-center justify-center bg-[#bb9876] px-9 py-4 text-sm font-semibold text-white transition hover:bg-[#a78362] sm:text-base"
+              >
+                {heroSlides[currentSlide].button}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Previous arrow */}
+        <button
+          type="button"
+          onClick={prevSlide}
+          aria-label="Previous slide"
+          className="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-white transition hover:scale-125 sm:left-8"
+        >
+          <ChevronLeft size={38} strokeWidth={3} />
+        </button>
+
+        {/* Next arrow */}
+        <button
+          type="button"
+          onClick={nextSlide}
+          aria-label="Next slide"
+          className="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-white transition hover:scale-125 sm:right-8"
+        >
+          <ChevronRight size={38} strokeWidth={3} />
+        </button>
+
+        {/* Slide indicators */}
+        <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+          {heroSlides.map((slide, index) => (
+            <button
+              key={slide.title}
+              type="button"
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={currentSlide === index ? "true" : undefined}
+              onClick={() => setCurrentSlide(index)}
+              className={`h-2.5 rounded-full transition-all duration-300 ${
+                currentSlide === index
+                  ? "w-8 bg-white"
+                  : "w-2.5 bg-white/60 hover:bg-white"
+              }`}
+            />
+          ))}
         </div>
       </section>
 
-      {/* Booking form */}
+      {/* BOOKING FORM */}
 
       <section
         id="booking"
-        className="relative z-10 mx-auto -mt-8 max-w-[1200px] scroll-mt-5 px-4 pb-10 sm:-mt-12 sm:px-6 lg:-mt-[59px] lg:px-5"
+        className="relative z-20 mx-auto -mt-8 max-w-[1200px] scroll-mt-5 px-4 pb-10 sm:-mt-12 sm:px-6 lg:-mt-[59px] lg:px-5"
       >
         <div className="grid grid-cols-1 bg-white shadow-[0_9px_18px_rgba(0,0,0,0.12)] sm:grid-cols-2 lg:grid-cols-4">
           <label className="flex min-h-[94px] items-center gap-4 border-b border-gray-200 px-5 py-5 sm:px-6 lg:min-h-[112px] lg:border-r">
@@ -487,7 +576,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Welcome */}
+      {/* WELCOME */}
 
       <section
         id="contact"
@@ -515,7 +604,7 @@ export default function Home() {
         </a>
       </section>
 
-      {/* About Us */}
+      {/* ABOUT US */}
 
       <section id="about" className="flex w-full flex-col md:flex-row">
         <div className="flex w-full flex-col items-start justify-center bg-white px-5 py-12 sm:px-10 sm:py-16 md:w-1/2 md:px-10 lg:px-16 lg:py-20 xl:px-24">
@@ -549,7 +638,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Our Rooms */}
+      {/* OUR ROOMS */}
 
       <section id="rooms" className="scroll-mt-8 py-14 sm:py-20 lg:py-24">
         <SectionHeading description="Maecenas feugiat mattis ipsum, vitae semper massa porttitor sit amet. Nulla mattis, urna et posuere ornare, neque leo dapibus ante, nec dignissim.">
@@ -563,12 +652,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Guest review */}
+      {/* GUEST REVIEW */}
 
       <section className="flex w-full flex-col md:flex-row">
         <div className="h-[280px] w-full overflow-hidden sm:h-[380px] md:h-auto md:min-h-[430px] md:w-1/2 lg:min-h-[500px]">
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyyQk8I82n4w7nFcnikM45lh1Z6Capqc4I2K_oH-ZahL3rTknN_UhQXEE&s=10"
+            src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85"
             alt="Hotel interior"
             loading="lazy"
             className="h-full w-full object-cover object-center"
@@ -581,7 +670,7 @@ export default function Home() {
               “
             </span>
 
-            <p className="text-xl leading-relaxed tracking-wide text-[#656a70] sm:text-2xl md:text-2xl lg:text-3xl">
+            <p className="text-xl leading-relaxed tracking-wide text-[#656a70] sm:text-2xl lg:text-3xl">
               We enjoyed our stay at Soho Hotel greatly, the staff were friendly
               and attentive to every one of our needs.
             </p>
@@ -593,7 +682,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Special Offers */}
+      {/* SPECIAL OFFERS */}
 
       <section id="offers" className="scroll-mt-8 py-14 sm:py-20 lg:py-24">
         <SectionHeading>Special Offers</SectionHeading>
@@ -625,14 +714,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Video tour */}
+      {/* VIDEO TOUR */}
 
       <section id="gallery" className="w-full scroll-mt-8">
         <div
           className="relative flex min-h-[380px] items-center justify-center bg-cover bg-center px-5 py-16 sm:min-h-[460px] sm:px-8 md:min-h-[520px]"
           style={{
             backgroundImage:
-              "url('https://i.pinimg.com/736x/48/0f/a3/480fa3728b79687fea9213507aa312af.jpg')",
+              "url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=85')",
           }}
         >
           <div className="absolute inset-0 bg-black/50" />
@@ -663,7 +752,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Hotel Facilities */}
+      {/* HOTEL FACILITIES */}
 
       <section className="bg-[#f3f3f3] px-5 py-14 sm:px-8 sm:py-20 lg:py-24">
         <SectionHeading>Hotel Facilities</SectionHeading>
@@ -690,11 +779,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* FOOTER */}
 
       <footer className="w-full bg-white">
         <div className="mx-auto grid max-w-[1454px] grid-cols-1 gap-10 px-5 py-12 sm:px-8 sm:py-16 md:grid-cols-2 md:gap-12 lg:grid-cols-3 lg:gap-16 lg:px-8">
-          {/* Follow Us */}
+          {/* FOLLOW US */}
 
           <div>
             <h3 className="mb-5 text-xl font-normal text-[#202329] sm:mb-8">
@@ -725,7 +814,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Contact */}
+          {/* CONTACT */}
 
           <div id="footer-contact">
             <h3 className="mb-5 text-xl font-normal text-[#202329] sm:mb-8">
@@ -761,7 +850,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Newsletter */}
+          {/* NEWSLETTER */}
 
           <div>
             <h3 className="mb-5 text-xl font-normal text-[#202329] sm:mb-8">
@@ -784,7 +873,7 @@ export default function Home() {
                 required
                 placeholder="Enter your email"
                 aria-label="Email address"
-                className="h-14 min-w-0 w-full flex-1 border-2 border-[#bd9876] bg-white px-4 text-sm outline-none focus:ring-1 focus:ring-[#bd9876] sm:h-16"
+                className="h-14 w-full min-w-0 flex-1 border-2 border-[#bd9876] bg-white px-4 text-sm outline-none focus:ring-1 focus:ring-[#bd9876] sm:h-16"
               />
 
               <button
@@ -797,7 +886,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bottom bar */}
+        {/* FOOTER BOTTOM BAR */}
 
         <div className="bg-[#bd9876]">
           <div className="mx-auto flex max-w-[1454px] flex-col items-start justify-between gap-4 px-5 py-6 text-white sm:flex-row sm:items-center sm:px-8 sm:py-8">
